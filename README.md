@@ -40,7 +40,7 @@ Result_DF = pd.DataFrame(np.column_stack(Data), columns=['call_IVs', 'call_delta
 ### Save or use the results
 Result_DF.to_csv('OpGreeksTestOutput.csv')
 
-Performance
+# Performance
 
 	•	CPU (multiprocessing): ~8 minutes for 1648 option contracts. (using mibian library in multiprocessing 12 cores)
 	•	GPU (OptionGreeksGPU): 0.20 seconds for 1648 option contracts (after warmup).
