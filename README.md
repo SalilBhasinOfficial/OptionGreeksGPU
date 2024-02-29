@@ -8,6 +8,15 @@ Features
 	•	Easy Integration: Designed to easily integrate with existing Python financial analysis workflows.
 	•	Comprehensive: Supports a wide range of Greeks calculations, including Delta, Gamma, Theta, Vega, and Rho.
 
+# Black-Scholes Model
+
+The Black-Scholes model is a fundamental concept in modern financial theory and is widely used for pricing European options on stocks that do not pay dividends. Developed by Fischer Black, Myron Scholes, and Robert Merton in the early 1970s, this model provides a theoretical estimate of the price of European-style options. The beauty of the Black-Scholes model lies in its ability to factor in the major variables affecting option prices, such as the stock price, the exercise price, the risk-free interest rate, the time to expiration, and the volatility of the stock.
+
+The Black-Scholes formula helps investors and traders to determine the fair value of an option, allowing them to make informed trading decisions. Specifically, it calculates the price of an option by inputting the current stock price, the option's strike price, the time until expiration (expressed as a year fraction), the risk-free interest rate, and the volatility of the stock. The model assumes that stock prices follow a lognormal distribution because asset prices cannot be negative, and it considers the constant risk-free rate for the option's life span.
+
+The model is particularly suited for European options, which can only be exercised at expiration, unlike American options, which can be exercised at any time before or at expiration. It's important to note that while the Black-Scholes model provides a robust framework for option valuation, it does have limitations, especially when applied to American options, options on dividend-paying stocks, or in highly volatile markets.
+
+
 # Installation
 
 Before installing OptionGreeksGPU, ensure you have a CUDA-compatible GPU and the appropriate CUDA Toolkit installed on your system.
@@ -39,6 +48,25 @@ Result_DF = pd.DataFrame(np.column_stack(Data), columns=['call_IVs', 'call_delta
 
 ### Save or use the results
 Result_DF.to_csv('OpGreeksTestOutput.csv')
+
+### Input Format for OptionGreeksGPU
+When using the OptionGreeksGPU library to calculate option Greeks based on the Black-Scholes model, the input data should be structured as follows:
+
+input_data = (
+    option_data=[[strikePrices], [underlyingPrices], [callPrices], [callRefs = 0s], [putPrices], [putRefs = 1s]],
+    days_to_expiry,
+interest_rate
+)
+
+strikePrices: An array of strike prices for the options.
+underlyingPrices: An array of current prices of the underlying asset.
+callPrices: An array of market prices for call options.
+callRefs: An array filled with 0s, indicating that the corresponding prices are for call options.
+putPrices: An array of market prices for put options.
+putRefs: An array filled with 1s, indicating that the corresponding prices are for put options.
+interestRate: The risk-free interest rate, expressed as a whole number (e.g., 5 for 5%).
+daysToExpiry: The time to expiration of the options, expressed in days (with Decimals).
+
 
 # Performance
 
