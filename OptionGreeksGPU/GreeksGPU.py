@@ -1,8 +1,7 @@
 import numpy as np
 from math import log, exp, sqrt
-from numba import cuda, float64, int32
+from numba import cuda
 import math
-import cupy as cp
 
 @cuda.jit(device=True)
 def norm_cdf_gpu(x):
@@ -164,38 +163,38 @@ def calculate_option_metrics(option_data, days_to_expiry, interest_rate):
     interest_rate = interest_rate / 100
     days_to_expiry = days_to_expiry / 365
 
-    strikePrices = cp.array(option_data[:, 0].astype(np.float32))
-    underlyingPrices = cp.array(option_data[:, 1].astype(np.float32))
+    strikePrices = cuda.to_device(option_data[:, 0].astype(np.float32))
+    underlyingPrices = cuda.to_device(option_data[:, 1].astype(np.float32))
 
-    callPrices = cp.array(option_data[:, 2].astype(np.float32))
-    call_optionTypes = cp.array(option_data[:, 3].astype(np.int8))
+    callPrices = cuda.to_device(option_data[:, 2].astype(np.float32))
+    call_optionTypes = cuda.to_device(option_data[:, 3].astype(np.int8))
 
-    putPrices = cp.array(option_data[:, 4].astype(np.float32))
-    put_optionTypes = cp.array(option_data[:, 5].astype(np.int8))
+    putPrices = cuda.to_device(option_data[:, 4].astype(np.float32))
+    put_optionTypes = cuda.to_device(option_data[:, 5].astype(np.int8))
 
-    call_IVs = cp.zeros_like(underlyingPrices)
-    call_deltas = cp.zeros_like(underlyingPrices)
-    call_a_values = cp.zeros_like(underlyingPrices)
-    call_d1_values = cp.zeros_like(underlyingPrices)
-    call_d2_values = cp.zeros_like(underlyingPrices)
-    call_delta2s = cp.zeros_like(underlyingPrices)
-    call_vegas = cp.zeros_like(underlyingPrices)
-    call_gammas = cp.zeros_like(underlyingPrices)
-    call_thetas = cp.zeros_like(underlyingPrices)
-    call_rhos = cp.zeros_like(underlyingPrices)
+    call_IVs = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_deltas = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_a_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_d1_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_d2_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_delta2s = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_vegas = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_gammas = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_thetas = cuda.to_device(np.zeros_like(underlyingPrices))
+    call_rhos = cuda.to_device(np.zeros_like(underlyingPrices))
 
-    put_IVs = cp.zeros_like(underlyingPrices)
-    put_deltas = cp.zeros_like(underlyingPrices)
-    put_a_values = cp.zeros_like(underlyingPrices)
-    put_d1_values = cp.zeros_like(underlyingPrices)
-    put_d2_values = cp.zeros_like(underlyingPrices)
-    put_delta2s = cp.zeros_like(underlyingPrices)
-    put_vegas = cp.zeros_like(underlyingPrices)
-    put_gammas = cp.zeros_like(underlyingPrices)
-    put_thetas = cp.zeros_like(underlyingPrices)
-    put_rhos = cp.zeros_like(underlyingPrices)
+    put_IVs = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_deltas = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_a_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_d1_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_d2_values = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_delta2s = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_vegas = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_gammas = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_thetas = cuda.to_device(np.zeros_like(underlyingPrices))
+    put_rhos = cuda.to_device(np.zeros_like(underlyingPrices))
 
-    parity = cp.zeros_like(underlyingPrices)
+    parity = cuda.to_device(np.zeros_like(underlyingPrices))
 
     threadsperblock = 14
     blockspergrid = (underlyingPrices.size + (threadsperblock - 1)) // threadsperblock
@@ -296,17 +295,17 @@ def calculate_option_metrics(option_data, days_to_expiry, interest_rate):
                                                put_optionTypes,
                                                put_rhos)
 
-    return [call_IVs.get(),
-            call_deltas.get(),
-            call_delta2s.get(),
-            call_vegas.get(),
-            call_gammas.get(),
-            call_thetas.get(),
-            call_rhos.get(),
-            put_IVs.get(),
-            put_deltas.get(),
-            put_delta2s.get(),
-            put_vegas.get(),
-            put_gammas.get(),
-            put_thetas.get(),
-            put_rhos.get()]
+    return [call_IVs.copy_to_host(),
+            call_deltas.copy_to_host(),
+            call_delta2s.copy_to_host(),
+            call_vegas.copy_to_host(),
+            call_gammas.copy_to_host(),
+            call_thetas.copy_to_host(),
+            call_rhos.copy_to_host(),
+            put_IVs.copy_to_host(),
+            put_deltas.copy_to_host(),
+            put_delta2s.copy_to_host(),
+            put_vegas.copy_to_host(),
+            put_gammas.copy_to_host(),
+            put_thetas.copy_to_host(),
+            put_rhos.copy_to_host()]

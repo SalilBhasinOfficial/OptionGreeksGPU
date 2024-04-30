@@ -1,7 +1,7 @@
 import numpy as np
 from math import log, exp, sqrt
 import math
-from numba import jit, float64, int32
+from numba import jit
 
 @jit(nopython=True)
 def norm_cdf_gpu(x):

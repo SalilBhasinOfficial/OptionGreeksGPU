@@ -39,8 +39,9 @@ To install OptionGreeksGPU, run the following command:
 Here’s a quick example of how to use OptionGreeksGPU (see test.py for exact operation) to compute Greeks for option contracts:
 
 ```python
-from OptionGreeksGPU.GreeksGPU import calculate_option_metrics
+from OptionGreeksGPU.Compute import calculate_option_metrics
 import pandas as pd
+import numpy as np
 
 ### Load your option contracts data (shared in test directory)
 df = pd.read_csv('OpGreeksTestInput.csv', parse_dates=['expiry', 'DT'])
@@ -80,8 +81,9 @@ daysToExpiry: The time to expiration of the options, expressed in days (with Dec
 
 # Performance
 
-	•	CPU (multiprocessing): ~8 minutes for 1648 option contracts. (using mibian library in multiprocessing 12 cores)
-	•	GPU (OptionGreeksGPU): 0.20 seconds for 1648 option contracts (after warmup).
+    •	CPU Python Single core without numba    | Warmup run = 144.23 Seconds | subsequent runs = 221.29 Seconds
+	•	CPU Machine Code using numba jit        | Warmup run = 1.94 Seconds   | subsequent runs = 0.68 Second
+	•	Cuda Capable GPU using numba jit        | Warmup run = 1.65 Seconds   | susequent runs = 0.14 Second
 
 # Contributing
 
