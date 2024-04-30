@@ -1,7 +1,18 @@
-import os
+import subprocess
 import importlib
+def is_cuda_available():
+    try:
+        subprocess.run(["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+    except FileNotFoundError:
+        return False
 
-cuda_available = 'CUDA_PATH' in os.environ
+cuda_available = is_cuda_available()
+print("CUDA Available:", cuda_available)
+
+
 if cuda_available:
     greeks_module = importlib.import_module("OptionGreeksGPU.GreeksGPU")
 else:
