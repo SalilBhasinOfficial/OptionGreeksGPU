@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='OptionGreeksGPU',
-    version='0.1.0',
+    version='2.0.0',
     author='Salil Bhasin',
     author_email='salilbhasinofficial@gmail.com',
-    description='GPU-accelerated computation of option Greeks',
+    description='GPU / Machine code - accelerated computation of option Greeks',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/SalilBhasinOfficial/OptionGreeksGPU.git',
@@ -17,7 +17,7 @@ setup(
         'pandas',
     ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Financial and Insurance Industry',
         'Topic :: Office/Business :: Financial :: Investment',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

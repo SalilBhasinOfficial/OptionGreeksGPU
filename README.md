@@ -1,10 +1,19 @@
-# OptionGreeksGPU
+# OptionGreeksGPU (V2.0.0)
 
-OptionGreeksGPU is a high-performance, GPU-accelerated library designed to calculate option Greeks for a large number of contracts quickly and efficiently. By leveraging the power of modern GPU architectures, OptionGreeksGPU can compute Greeks for 1648 option contracts in just 0.20 seconds (after warmup), offering a significant performance improvement over traditional CPU-based methods.
+OptionGreeksGPU is a high-performance, GPU-accelerated library designed to calculate option Greeks for a large number of contracts quickly and efficiently. 
+
+In the absense of cuda compatible GPU, the library falls back to machine code using numba which is over 100 times faster. By leveraging the power of machine code / modern GPU architectures, OptionGreeksGPU can compute Greeks for over 1648 option contracts in just 0.20 seconds (after warmup), offering a significant performance improvement over computation in python.
+
+Benchmarking results on test data of 824 contracts (included in test directory):
+
+    •	CPU Single core without numba    | Warmup run = 144.23 Seconds | subsequent runs = 221.29 Seconds
+	•	CPU Machine Code using numba jit | Warmup run = 1.94 Seconds   | subsequent runs = 0.68 Second
+	•	Cuda Capable GPU using numba jit | Warmup run = 1.65 Seconds   | susequent runs = 0.14 Second
+
 
 Features
 
-	•	Fast Computation: Utilizes GPU acceleration to dramatically reduce computation times for option Greeks.
+	•	Fast Computation: Utilizes GPU acceleration/ Machine code to dramatically reduce computation times for option Greeks.
 	•	Easy Integration: Designed to easily integrate with existing Python financial analysis workflows.
 	•	Comprehensive: Supports a wide range of Greeks calculations, including Delta, Gamma, Theta, Vega, and Rho.
 
@@ -23,12 +32,13 @@ Before installing OptionGreeksGPU, ensure you have a CUDA-compatible GPU and the
 
 To install OptionGreeksGPU, run the following command:
 
-pip install OptionGreeksGPU
+`pip install OptionGreeksGPU`
 
 # Usage
 
 Here’s a quick example of how to use OptionGreeksGPU (see test.py for exact operation) to compute Greeks for option contracts:
 
+```python
 from OptionGreeksGPU.GreeksGPU import calculate_option_metrics
 import pandas as pd
 
@@ -48,15 +58,15 @@ Result_DF = pd.DataFrame(np.column_stack(Data), columns=['call_IVs', 'call_delta
 
 ### Save or use the results
 Result_DF.to_csv('OpGreeksTestOutput.csv')
+```
 
-### Input Format for OptionGreeksGPU
+### Input Format for OptionGreeksGPU (try using Test.py)
 When using the OptionGreeksGPU library to calculate option Greeks based on the Black-Scholes model, the input data should be structured as follows:
 
-input_data = (
-    option_data=[[strikePrices], [underlyingPrices], [callPrices], [callRefs = 0s], [putPrices], [putRefs = 1s]],
-    days_to_expiry,
-interest_rate
-)
+input_data = (option_data=[[strikePrices], [underlyingPrices], [callPrices], [callRefs = 0s], [putPrices], [putRefs = 1s]],
+                days_to_expiry,
+                interest_rate)
+
 
 strikePrices: An array of strike prices for the options.
 underlyingPrices: An array of current prices of the underlying asset.

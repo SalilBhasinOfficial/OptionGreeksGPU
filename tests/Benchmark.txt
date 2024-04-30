@@ -1,0 +1,3 @@
+CPU - Warmup run = 144.23 Seconds - subsequent runs = 221.29 Seconds
+CPU C - Warmup run = 1.94 Seconds - subsequent runs = 0.68 Second
+GPU - Warmup run = 1.65 Seconds - susequent runs = 0.14 Second

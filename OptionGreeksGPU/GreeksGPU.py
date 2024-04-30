@@ -3,8 +3,6 @@ from math import log, exp, sqrt
 from numba import cuda, float64, int32
 import math
 import cupy as cp
-import pandas as pd
-
 
 @cuda.jit(device=True)
 def norm_cdf_gpu(x):
