@@ -142,8 +142,8 @@ def getRho_C(strikePrice,interestRate,daysToExpiration,d2_values,optionType,rhos
 @jit(nopython=True)
 def getParity_C(underlyingPrices,strikePrices,interestRate,daysToExpiration,callPrices,putPrices,output):
     for i in range(len(underlyingPrices)):
-        pv_strike = strikePrices[pos] / ((1 + interestRate) ** daysToExpiration)
-        output[pos] = callPrices[pos] - putPrices[pos] - underlyingPrices[pos] + pv_strike
+        pv_strike = strikePrices[i] / ((1 + interestRate) ** daysToExpiration)
+        output[i] = callPrices[i] - putPrices[i] - underlyingPrices[i] + pv_strike
 
 
 # -----------------------------------------------------------
