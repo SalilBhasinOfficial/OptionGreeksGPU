@@ -1,0 +1,99 @@
+# Streaming Option Greeks Configuration
+
+app:
+  name: "OptionGreeksStreaming"
+  version: "3.1.0"
+  log_level: "INFO"
+
+# Processing configuration
+processing:
+  batch_size: 500              # Max contracts per batch
+  window_ms: 50                # Micro-batch window (milliseconds)
+  interest_rate: 5.0           # Default risk-free rate (%)
+  use_iv_smoothing: true       # Enable IV smoothing with history
+  smoothing_alpha: 0.3         # IV smoothing factor (0-1)
+
+# State management
+state:
+  cache_size: 10000            # In-memory cache size (contracts)
+  iv_history_depth: 100        # IV history depth per contract
+  state_ttl_days: 7            # Redis state TTL (days)
+
+# Redis configuration
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  max_connections: 20
+  decode_responses: false
+
+  # Redis Streams configuration
+  streams:
+    input_key: "market:updates"
+    output_key: "greeks:updates"
+    consumer_group: "greeks_compute"
+    consumer_name: "worker_1"
+    block_ms: 1000
+    count: 100
+
+  # Redis TimeSeries configuration
+  timeseries:
+    enabled: true
+    key_prefix: "ts:greeks"
+    retention_days: 30
+
+  # Redis HKEY configuration
+  hkey:
+    key_pattern: "nse:options:*"
+    poll_interval_ms: 100
+
+# QuestDB configuration
+questdb:
+  enabled: true
+  host: "localhost"
+  port: 8812                   # PostgreSQL wire protocol
+  ilp_port: 9009               # ILP (fast ingestion)
+  user: "admin"
+  password: "quest"
+  batch_size: 1000
+  flush_interval_sec: 300      # 5 minutes
+
+# Data sources (enable/disable)
+sources:
+  csv:
+    enabled: false
+    file_path: "/data/nse_options.csv"
+    watch_mode: false
+    batch_size: 1000
+
+  redis_streams:
+    enabled: true
+
+  redis_hkey:
+    enabled: false
+
+  redis_timeseries:
+    enabled: false
+
+  questdb:
+    enabled: false
+
+# Output sinks (enable/disable)
+output:
+  redis_streams:
+    enabled: true
+    key: "greeks:updates"
+
+  redis_timeseries:
+    enabled: true
+
+  questdb:
+    enabled: true
+    batch_size: 1000
+    flush_interval_sec: 300
+
+# Monitoring
+monitoring:
+  enabled: true
+  log_stats_interval_sec: 60
+  metrics_port: 9090
